@@ -16,8 +16,6 @@ name: docker
 on:
   push:
     branches: main
-    paths:
-      - "awsenergylabeler/**"
     # Publish semver tags as releases.
     tags: ["v*.*.*"]
   pull_request:
