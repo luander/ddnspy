@@ -1,1 +1,4 @@
 dist
+.trunk
+__pycache__
+*.pyc

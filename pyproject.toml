@@ -3,11 +3,16 @@ name = "ddnspy"
 version = "0.1.0"
 description = ""
 authors = ["luander <iam@luander.net>"]
+repository = "https://github.com/luander/ddnspy"
+
+[tool.poetry.scripts]
+ddnspy = 'ddnspy/ddnspy.py:main'
 
 [tool.poetry.dependencies]
 python = "^3.9"
 requests = "^2.28.1"
 cloudflare = "^2.9.12"
+sentry-sdk = "^1.9.8"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
