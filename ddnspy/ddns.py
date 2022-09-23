@@ -26,26 +26,6 @@ from ddnspy.dns import (
 )
 
 
-def main():
-    setup_logging()
-    args = _get_args()
-    current_ip = resolve_hostname(args.hostname)
-    public_ip = get_public_ip()
-    if not public_ip:
-        logging.error(f'{args.hostname} resolution failure')
-        sys.exit(os.EX_SOFTWARE)
-    if not current_ip:
-        logging.error(f'{args.hostname} cannot determine public IP')
-        sys.exit(os.EX_SOFTWARE)
-
-    if current_ip == public_ip:
-        logging.info(f'{args.hostname} -> A({current_ip}) == Public IP({public_ip})')
-        sys.exit(os.EX_OK)
-
-    cf: CloudFlare = CloudFlare.CloudFlare()
-    update(cf, args.hostname, public_ip)
-
-
 def setup_logging():
     """Configures Sentry.io logging"""
     sentry_logging = LoggingIntegration(
@@ -61,7 +41,7 @@ def setup_logging():
     )
 
 
-def _get_args():
+def get_args():
     parser = argparse.ArgumentParser(description='DDNSPY Dynamic DNS Updater')
     parser.add_argument(
         'hostname',
@@ -99,6 +79,25 @@ def update(provider, hostname: str, ip: str):
     
     zone_id = get_zone_id(provider, zone_name)
     do_dns_update(provider, zone_id, hostname, ip)
+
+
+def main():
+    setup_logging()
+    args = get_args()
+    current_ip = resolve_hostname(args.hostname)
+    public_ip = get_public_ip()
+    if not public_ip:
+        logging.error(f'{args.hostname} resolution failure')
+        raise SystemExit(os.EX_SOFTWARE)
+    if not current_ip:
+        logging.error(f'{args.hostname} cannot determine public IP')
+        raise SystemExit(os.EX_SOFTWARE)
+    if current_ip == public_ip:
+        logging.info(f'{args.hostname} -> A({current_ip}) == Public IP({public_ip})')
+        return
+
+    cf: CloudFlare = CloudFlare.CloudFlare()
+    update(cf, args.hostname, public_ip)
 
 
 if __name__ == "__main__":
