@@ -24,7 +24,8 @@ RUN /venv/bin/poetry config virtualenvs.in-project true --local && \
 # Copy the virtualenv into a distroless image
 FROM gcr.io/distroless/python3-debian11:nonroot
 COPY --from=build-venv /venv /venv
-COPY ./ddnspy /app
+COPY ./ddnspy /app/ddnspy
+COPY ./ddns.py /app/ddns.py
 WORKDIR /app
 USER nonroot
 ENTRYPOINT ["/venv/bin/python3", "ddns.py"]
